@@ -1,0 +1,8 @@
+{
+    "name": "street-light-management",
+    "workspaces": ["frontend", "backend"],
+    "scripts": {
+      "start-frontend": "npm --prefix frontend start",
+      "start-backend": "cd backend && uvicorn app:app --reload"
+    }
+  }
