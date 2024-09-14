@@ -5,9 +5,8 @@ import maplibregl from "maplibre-gl";
 import { ViewState } from "../../types/viewstate";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { transformRequest } from '../../services/ola-maps-api';
-import { ScatterplotLayer } from '@deck.gl/layers';
 import { FlyToInterpolator } from '@deck.gl/core';
-
+import './Map.css';
 
 const Map: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>({
@@ -19,33 +18,23 @@ const Map: React.FC = () => {
     transitionDuration: 0
   });
 
-  // This layer gives a red dot at the center of the map
-  // const layer = new ScatterplotLayer({
-  //   id: 'scatterplot-layer',
-  //   data: [{ position: [77.057919, 28.598051], size: 100 }],
-  //   getPosition: d => d.position,
-  //   getRadius: d => d.size,
-  //   getColor: [255, 0, 0]
-  // }); 
-
   useEffect(() => {
     setTimeout(() => {
       setViewState({
-        longitude: 77.057919,
-        latitude: 28.598051,
-        zoom: 15,
+        longitude: 77.05380098621715,
+        latitude: 28.596382537282675,
+        zoom: 17,
         pitch: 0,
         bearing: 0,
-        transitionDuration: 2000,
+        transitionDuration: 5000,
         transitionInterpolator: new FlyToInterpolator(),
       });
     }, 2000);
   }, []);
 
   return (
-    <div>
+    <div className="map-container">
       <DeckGL
-        style={{ width: "100vw", height: "100vh", overflow: "hidden" }}
         viewState={viewState}
         onViewStateChange={(nextViewState) => setViewState(nextViewState.viewState as ViewState)}
         controller={true}
