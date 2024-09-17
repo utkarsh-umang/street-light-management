@@ -7,20 +7,10 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { transformRequest } from '../../services/ola-maps-api';
 import { FlyToInterpolator } from '@deck.gl/core';
 import { ScatterplotLayer, PathLayer } from '@deck.gl/layers';
+import { fetchInterpolatedPoints } from "../../services/be-api";
 import './Map.css';
 
-const interpolatePoints = (start: number[], end: number[], numPoints: number) => {
-  const latStep = (end[1] - start[1]) / (numPoints - 1);
-  const lonStep = (end[0] - start[0]) / (numPoints - 1);
-  
-  const points = [];
-  for (let i = 0; i < numPoints; i++) {
-    const lat = start[1] + latStep * i;
-    const lon = start[0] + lonStep * i;
-    points.push([lon, lat]);
-  }
-  return points;
-};
+const mapStyle = process.env.REACT_APP_MAP_STYLE;
 
 const Map: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>({
@@ -31,6 +21,10 @@ const Map: React.FC = () => {
     bearing: 0,
     transitionDuration: 0
   });
+
+  const [streetPoints, setStreetPoints] = useState<number[][]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setTimeout(() => {
@@ -44,20 +38,36 @@ const Map: React.FC = () => {
         transitionInterpolator: new FlyToInterpolator(),
       });
     }, 2000);
+
+    const fetchPoints = async () => {
+      try {
+        const points = await fetchInterpolatedPoints(
+          [77.0521098621715, 28.596682537282675],
+          [77.0544098621715, 28.595122537282675], 
+          10
+        );
+        setStreetPoints(points);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to fetch street points");
+        setLoading(false);
+      }
+    };
+
+    fetchPoints();
   }, []);
 
-  const startCoord = [77.0521098621715, 28.596682537282675];
-  const endCoord = [77.0544098621715, 28.595122537282675];
-  
-  const streetPoints = interpolatePoints(startCoord, endCoord, 10);
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   const pathLayer = new PathLayer({
     id: 'path-layer',
     data: [streetPoints],
     getPath: d => d,
     getWidth: 1,
-    getColor: [0, 128, 255], 
-    pickable: true, 
+    getColor: [0, 128, 255],
+    pickable: true,
     onClick: () => alert('Street clicked!'),
   });
 
@@ -65,12 +75,13 @@ const Map: React.FC = () => {
     id: 'scatterplot-layer',
     data: streetPoints.map(point => ({ position: point, size: 1 })),
     getPosition: d => d.position,
-    getRadius: d => d.size,
+    getRadius: d => d.size, 
     getColor: [255, 0, 0],
     radiusMinPixels: 5,
   });
 
-  return (
+  return ( loading ? 
+    <div>Loading map...</div> :
     <div className="map-container">
       <DeckGL
         viewState={viewState}
@@ -80,7 +91,7 @@ const Map: React.FC = () => {
       >
         <StaticMap
           mapLib={maplibregl as any}
-          mapStyle="https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json"
+          mapStyle={mapStyle}
           transformRequest={transformRequest}
         />
       </DeckGL>

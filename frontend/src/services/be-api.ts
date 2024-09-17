@@ -1,8 +1,17 @@
-import axios from 'axios';
+import axios from "axios";
 
-const apiService = axios.create({
-    baseURL: 'https://api.example.com', // Replace with your API base URL
-    timeout: 5000, // Adjust the timeout value as needed
-});
+const BASE_URL = process.env.REACT_APP_BE_URL;
 
-export default apiService;
+export const fetchInterpolatedPoints = async (startPoint: number[], endPoint: number[], numPoints: number) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/api/interpolate-points`, {
+      start_point: startPoint,
+      end_point: endPoint,
+      num_points: numPoints,
+    });
+    return response.data.points;
+  } catch (error) {
+    console.error("Error fetching interpolated points:", error);
+    throw new Error("Failed to fetch points.");
+  }
+};

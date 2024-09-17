@@ -1,11 +1,13 @@
 import axios from 'axios';
 
+const apiKey = process.env.REACT_APP_OLA_MAPS_API_KEY;
+const vectorMapBaseURL = process.env.REACT_APP_OLA_MAPS_VECTOR_MAP_BASE_URL;
+
 const apiService = axios.create({
-    baseURL: 'https://api.olamaps.io/tiles/vector/v1', // Replace with your API base URL
-    timeout: 5000, // Adjust the timeout value as needed
+    baseURL: vectorMapBaseURL,
+    timeout: 5000, 
 });
 
-const apiKey = process.env.REACT_APP_OLA_MAPS_API_KEY;
 export const transformRequest = (url: string, resourceType: string | undefined) => {
     if (!apiKey) {
         console.error("API Key is missing!");
