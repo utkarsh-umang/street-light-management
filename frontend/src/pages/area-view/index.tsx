@@ -6,7 +6,21 @@ import { ViewState } from "../../types/viewstate";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { transformRequest } from '../../services/ola-maps-api';
 import { FlyToInterpolator } from '@deck.gl/core';
+import { ScatterplotLayer, PathLayer } from '@deck.gl/layers';
 import './Map.css';
+
+const interpolatePoints = (start: number[], end: number[], numPoints: number) => {
+  const latStep = (end[1] - start[1]) / (numPoints - 1);
+  const lonStep = (end[0] - start[0]) / (numPoints - 1);
+  
+  const points = [];
+  for (let i = 0; i < numPoints; i++) {
+    const lat = start[1] + latStep * i;
+    const lon = start[0] + lonStep * i;
+    points.push([lon, lat]);
+  }
+  return points;
+};
 
 const Map: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>({
@@ -32,13 +46,37 @@ const Map: React.FC = () => {
     }, 2000);
   }, []);
 
+  const startCoord = [77.0521098621715, 28.596682537282675];
+  const endCoord = [77.0544098621715, 28.595122537282675];
+  
+  const streetPoints = interpolatePoints(startCoord, endCoord, 10);
+
+  const pathLayer = new PathLayer({
+    id: 'path-layer',
+    data: [streetPoints],
+    getPath: d => d,
+    getWidth: 1,
+    getColor: [0, 128, 255], 
+    pickable: true, 
+    onClick: () => alert('Street clicked!'),
+  });
+
+  const scatterplotLayer = new ScatterplotLayer({
+    id: 'scatterplot-layer',
+    data: streetPoints.map(point => ({ position: point, size: 1 })),
+    getPosition: d => d.position,
+    getRadius: d => d.size,
+    getColor: [255, 0, 0],
+    radiusMinPixels: 5,
+  });
+
   return (
     <div className="map-container">
       <DeckGL
         viewState={viewState}
         onViewStateChange={(nextViewState) => setViewState(nextViewState.viewState as ViewState)}
         controller={true}
-        layers={[]}
+        layers={[pathLayer, scatterplotLayer]}
       >
         <StaticMap
           mapLib={maplibregl as any}
