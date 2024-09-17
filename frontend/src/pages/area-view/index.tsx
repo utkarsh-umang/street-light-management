@@ -9,6 +9,7 @@ import { FlyToInterpolator } from '@deck.gl/core';
 import { ScatterplotLayer, PathLayer } from '@deck.gl/layers';
 import { fetchInterpolatedPoints } from "../../services/be-api";
 import './Map.css';
+import Loading from "../../components/loading/Loading";
 
 const mapStyle = process.env.REACT_APP_MAP_STYLE;
 
@@ -57,10 +58,6 @@ const Map: React.FC = () => {
     fetchPoints();
   }, []);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   const pathLayer = new PathLayer({
     id: 'path-layer',
     data: [streetPoints],
@@ -81,7 +78,8 @@ const Map: React.FC = () => {
   });
 
   return ( loading ? 
-    <div>Loading map...</div> :
+    <Loading /> : error ? 
+    <div>{error}</div> :
     <div className="map-container">
       <DeckGL
         viewState={viewState}
