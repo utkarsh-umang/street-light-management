@@ -3,6 +3,7 @@ from app.api import street
 from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 from app.db import DECLARATIVE_BASE, engine
+from app.models.models import Street, StreetLight
 
 app = FastAPI(title=settings.app_name)
 
