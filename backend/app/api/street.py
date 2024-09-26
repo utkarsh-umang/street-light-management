@@ -92,7 +92,7 @@ def get_street_light(street_light_id: int, db: Session = Depends(get_db)):
 @router.post("/interpolate-points", response_model=schemas.StreetPointsResponse)
 def get_interpolated_points(request: schemas.StreetPointsRequest):
     points = interpolate_points(request.start_point, request.end_point, request.num_points)
-    return StreetPointsResponse(points=points)
+    return schemas.StreetPointsResponse(points=points)
 
 @router.post("/streetlights/operations/")
 def create_street_light_operations(
