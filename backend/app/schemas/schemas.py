@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import date
 
 class StreetPointsRequest(BaseModel):
@@ -105,6 +105,92 @@ class StreetLight(StreetLightBase):
     energy_consumption: Optional[EnergyConsumptionBase]
     operational_status: Optional[OperationalStatusBase]
     life_cycle_information: Optional[LifeCycleInformationBase]
+
+    class Config:
+        from_attributes = True
+class Coordinates(BaseModel):
+    latitude: float
+    longitude: float
+
+class StreetLocation(BaseModel):
+    start: Coordinates
+    end: Coordinates
+
+class StreetBasicInfo(BaseModel):
+    id: int
+    street_name: str
+    ward: Optional[str]
+    total_lights: int
+    total_power_consumption: float
+    operational_summary: Dict[str, int]
+    recent_issues: int
+    coordinates: Optional[StreetLocation] = None
+
+    class Config:
+        from_attributes = True
+
+class MaintenanceRecord(BaseModel):
+    date: date
+    type: str
+    cost: float
+
+class LightEnergyConsumption(BaseModel):
+    light_id: int
+    monthly_consumption: float
+    daily_consumption: float
+
+class LightInstallation(BaseModel):
+    installation_date: date
+    contractor_name: Optional[str]
+
+class LightSpecification(BaseModel):
+    bulb_type: Optional[str]
+    bulb_manufacturer: Optional[str]
+    wattage: Optional[int]
+
+class OperationalStatus(BaseModel):
+    current_status: str
+    last_status_update: Optional[date]
+
+class LightInfo(BaseModel):
+    id: int
+    location: Coordinates
+    address: Optional[str]
+    installation: Optional[LightInstallation]
+    specifications: Optional[LightSpecification]
+    status: Optional[OperationalStatus]
+
+class MaintenanceSummary(BaseModel):
+    total_maintenance_records: int
+    recent_maintenance: List[MaintenanceRecord]
+
+class EnergySummary(BaseModel):
+    total_monthly_consumption: float
+    average_daily_consumption: float
+    per_light_consumption: List[LightEnergyConsumption]
+
+class CostSummary(BaseModel):
+    total_installation_cost: float
+    total_maintenance_cost: float
+    total_electricity_cost: float
+    total_cost: float
+
+class WarrantySummary(BaseModel):
+    active_warranties: int
+    expiring_soon: int
+
+class StreetInfo(BaseModel):
+    street_name: str
+    ward: Optional[str]
+    description: Optional[str]
+
+class StreetDetailedInfo(BaseModel):
+    street_info: StreetInfo
+    lights_info: List[LightInfo]
+    maintenance_summary: MaintenanceSummary
+    energy_summary: EnergySummary
+    cost_summary: CostSummary
+    warranty_summary: WarrantySummary
 
     class Config:
         from_attributes = True
