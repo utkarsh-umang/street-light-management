@@ -174,6 +174,7 @@ def get_street_basic_info(street_id: int, db: Session = Depends(get_db)):
             )
         )
     return schemas.StreetBasicInfo(
+        id=street.id,
         street_name=street.name,
         ward=street.ward,
         total_lights=total_lights,
