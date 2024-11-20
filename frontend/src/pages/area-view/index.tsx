@@ -48,7 +48,7 @@ const Map: React.FC = () => {
 
     const fetchData = async () => {
       try {
-        const streetData = await fetchStreetBasicInfo(3);
+        const streetData = await fetchStreetBasicInfo(1);
         const points = await fetchInterpolatedPoints(
           [streetData.coordinates.start.longitude, streetData.coordinates.start.latitude],
           [streetData.coordinates.end.longitude, streetData.coordinates.end.latitude],

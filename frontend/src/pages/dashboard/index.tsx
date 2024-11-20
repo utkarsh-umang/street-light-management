@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const streetData = await fetchStreetDetailedInfo(3);
+      const streetData = await fetchStreetDetailedInfo(1);
       setData(streetData);
     };
     fetchData();
@@ -35,26 +35,26 @@ const Dashboard: React.FC = () => {
     toggleConsumption === "daily"
       ? data.energy_summary.per_light_consumption.map((light: any) => ({
           lightId: `Light ${light.light_id}`,
-          consumption: light.daily_consumption,
+          consumption: light.daily_consumption.toFixed(3),
         }))
       : data.energy_summary.per_light_consumption.map((light: any) => ({
           lightId: `Light ${light.light_id}`,
-          consumption: light.monthly_consumption,
+          consumption: light.monthly_consumption.toFixed(3),
         }));
 
   const maintenanceCostData = data.maintenance_summary.maintenance.map(
     (maintenance: any) => ({
       date: maintenance.date,
-      cost: maintenance.cost,
+      cost: Math.round(maintenance.cost),
       type: maintenance.type,
       street_light_id: maintenance.street_light_id,
     })
   );
 
   const costSummaryData = [
-    { name: "Installation Cost", value: data.cost_summary.total_installation_cost },
-    { name: "Maintenance Cost", value: data.cost_summary.total_maintenance_cost },
-    { name: "Electricity Cost", value: data.cost_summary.total_electricity_cost },
+    { name: "Installation Cost", value: Math.round(data.cost_summary.total_installation_cost) },
+    { name: "Maintenance Cost", value: Math.round(data.cost_summary.total_maintenance_cost) },
+    { name: "Electricity Cost", value: Math.round(data.cost_summary.total_electricity_cost) },
   ];
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
@@ -68,7 +68,7 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="card">
           <h3>Monthly Energy Usage</h3>
-          <p>{data.energy_summary.total_monthly_consumption} kWh</p>
+          <p>{Math.round(data.energy_summary.total_monthly_consumption)} kWh</p>
         </div>
         <div className="card">
           <h3>Maintenance Records</h3>
@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
                 </Pie>
             </PieChart>
           </ResponsiveContainer>
-          <p>Total Cost: ₹{data.cost_summary.total_cost}</p>
+          <p>Total Cost: ₹{Math.round(data.cost_summary.total_cost)}</p>
         </div>
         <div className="warranty-card">
           <h4>Warranty Summary</h4>
