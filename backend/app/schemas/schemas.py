@@ -133,6 +133,7 @@ class MaintenanceRecord(BaseModel):
     date: date
     type: str
     cost: float
+    street_light_id: int
 
 class LightEnergyConsumption(BaseModel):
     light_id: int
@@ -162,7 +163,7 @@ class LightInfo(BaseModel):
 
 class MaintenanceSummary(BaseModel):
     total_maintenance_records: int
-    recent_maintenance: List[MaintenanceRecord]
+    maintenance: List[MaintenanceRecord]
 
 class EnergySummary(BaseModel):
     total_monthly_consumption: float

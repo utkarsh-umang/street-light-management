@@ -12,6 +12,7 @@ import './Map.css';
 import Loading from "../../components/loading/Loading";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { StreetBasicInfo } from '../../types/street';
+import { useNavigate } from "react-router-dom";
 
 const mapStyle = process.env.REACT_APP_MAP_STYLE;
 
@@ -24,7 +25,7 @@ const Map: React.FC = () => {
     bearing: 0,
     transitionDuration: 0,
   });
-
+  const navigate = useNavigate();
   const [streetPoints, setStreetPoints] = useState<number[][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,7 +101,7 @@ const Map: React.FC = () => {
   };
 
   const handleViewDetails = () => {
-    console.log("Navigating to detailed street view...");
+    navigate('/dashboard');
   };
 
   return loading ? (

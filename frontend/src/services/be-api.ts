@@ -19,7 +19,16 @@ export const fetchInterpolatedPoints = async (startPoint: number[], endPoint: nu
 export const fetchStreetBasicInfo = async (streetId: number) => {
   try {
     const response = await axios.get(`${BASE_URL}/api/streets/${streetId}/basic`);
-    console.log("here", response);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching street information:", error);
+    throw new Error("Failed to fetch street information.");
+  }
+};
+
+export const fetchStreetDetailedInfo = async (streetId: number) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/streets/${streetId}/detailed`);
     return response.data;
   } catch (error) {
     console.error("Error fetching street information:", error);

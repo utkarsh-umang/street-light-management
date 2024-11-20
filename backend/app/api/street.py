@@ -240,13 +240,14 @@ def get_street_detailed_info(street_id: int, db: Session = Depends(get_db)):
         ],
         maintenance_summary=schemas.MaintenanceSummary(
             total_maintenance_records=len(maintenance_history),
-            recent_maintenance=[
+            maintenance=[
                 schemas.MaintenanceRecord(
                     date=record.maintenance_date,
                     type=record.maintenance_type,
-                    cost=record.cost
+                    cost=record.cost,
+                    street_light_id=record.street_light_id,
                 )
-                for record in maintenance_history[:5]
+                for record in maintenance_history
             ]
         ),
         energy_summary=schemas.EnergySummary(
